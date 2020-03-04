@@ -41,8 +41,8 @@ public class JWT {
                 print("JWT: Can't compute sign.")
                 return nil
             }
-        } catch let err {
-            print(err.localizedDescription)
+        } catch {
+            print(error.localizedDescription)
             return nil
         }
     }
@@ -86,8 +86,8 @@ extension JWT {
             self.header = header
             self.payload = payload
             
-        } catch let err {
-            print(err.localizedDescription)
+        } catch {
+            print(error.localizedDescription)
             return nil
         }
     }
