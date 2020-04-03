@@ -10,7 +10,6 @@ class Cryptor {
         let context = UnsafeMutablePointer<CCHmacContext>.allocate(capacity: 1)
         defer { context.deallocate() }
         
-        
         key.withUnsafeBytes { (buffer: UnsafePointer<UInt8>) in
             CCHmacInit(context, algorithm.HMACAlgorithm, buffer, size_t(key.count))
         }
