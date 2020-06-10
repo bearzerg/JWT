@@ -25,8 +25,35 @@ public class JWT {
     var alg: Algorithm
     
     public var header: [String: String] = [:]
-    public var payload: [String: String] = [:]
+    public var payload: [String: Any] = [:]
     public var secret: String
+    
+    public var subject: String? { return payload["sub"] as? String }
+    public var identifier: String? { return payload["jti"] as? String  }
+    public var issuer: String? { return payload["iss"] as? String  }
+    
+    public var notValidBefore: Date? {
+        if let interval = payload["nbf"] as? TimeInterval {
+            return Date(timeIntervalSince1970: interval)
+        }
+        return nil
+    }
+    public var issuedAt: Date? {
+        if let interval = payload["iat"] as? TimeInterval {
+            return Date(timeIntervalSince1970: interval)
+        }
+        return nil
+    }
+    public var expiresAt: Date? {
+        if let interval = payload["exp"] as? TimeInterval {
+        return Date(timeIntervalSince1970: interval)
+        }
+        return nil
+    }
+    
+    public var isExpired: Bool? {
+        guard let expireDate = expiresAt else { return nil }
+        return expireDate.compare(Date()) != .orderedDescending ? true : false}
     
     public var token: String? {
         do {
@@ -67,7 +94,7 @@ extension JWT {
         
         do {
             guard let header = try JSONSerialization.jsonObject(with: headerData, options: []) as? [String: String],
-                let payload = try JSONSerialization.jsonObject(with: payloadData, options: []) as? [String: String]
+                let payload = try JSONSerialization.jsonObject(with: payloadData, options: []) as? [String: Any]
                 else {
                     print("JWT: Failed to parse header/payload.")
                     return nil
